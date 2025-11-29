@@ -1,4 +1,9 @@
-import pytesseract
+# ---- Lazy import for pytesseract (prevents crash if not installed) ----
+try:
+    import pytesseract
+except ImportError:
+    pytesseract = None
+
 from PIL import Image
 from io import BytesIO
 import base64
@@ -34,9 +39,13 @@ def ocr_image_tool(payload: dict) -> dict:
         "text": "<extracted text>",
         "engine": "pytesseract"
     }
-
-    Use this tool when the user wants to read or extract text from an image.
     """
+    # ---- Prevent crash if pytesseract is missing ----
+    if pytesseract is None:
+        return {
+            "error": "pytesseract is not installed. OCR not available on this deployment."
+        }
+
     try:
         image_data = payload["image"]
         lang = payload.get("lang", "eng")
@@ -49,4 +58,4 @@ def ocr_image_tool(payload: dict) -> dict:
             "engine": "pytesseract"
         }
     except Exception as e:
-        return f"Error occurred: {e}"
+        return {"error": str(e)}

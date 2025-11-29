@@ -10,3 +10,6 @@ wheels/
 .venv
 tests
 LLMFiles
+.env
+.venv/
+__pycache__/
